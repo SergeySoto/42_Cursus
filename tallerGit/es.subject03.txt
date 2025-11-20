@@ -1,0 +1,11 @@
+Instrucciones:
+
+(Individualmente)
+
+- Añade el repositorio que has creado en el ejercicio anterior como submódulo a este repositorio
+
+- Añade "Taller Git(hub).pdf" al otro repositorio y actualiza el submódulo
+
+- Crea otro clon del repositorio e inicializa el submódulo
+
+- Crea un conflicto intencional entre tu submódulo y el repositorio original y resuélvelo
