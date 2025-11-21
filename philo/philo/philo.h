@@ -6,7 +6,7 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 19:38:54 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/11/20 16:28:11 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:17:18 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,39 @@ int			ft_isdigit(int c);
 int			ft_isspace(int c);
 long		ft_atol(char *str);
 int			validate_args(int argc, char **argv);
-//Inits
+/**
+ * @brief Initializes the simulation table with command-line
+ * parameters and mutexes.
+ * This function reads the philosopher count, timing constraints,
+ * and optional meal limit from the CLI arguments, records the simulation
+ * start time, resets the death flag, and initializes the synchronization
+ * primitives required for the table.
+ * @param argc Argument count
+ * @param argv Argument vector
+ * @param table Pointer to the struct of table
+ * @return 0 on success or 1 if mutex initialization fails.
+ */
 int			init_table(int argc, char **argv, t_table *table);
+/**
+ * @brief Initializes each philosopher structure with its identifier, 
+ * fork references, meal counters, timestamps, and a pointer to the
+ * shared table context.
+ *
+ * @param philo  Array of philosopher structures to initialize.
+ * @param table  Shared dining table data, including forks and timing info.
+ * @return       Always returns 0 on successful initialization.
+ */
 int			init_philo(t_philo *philo, t_table *table);
+/**
+ * @brief Initialize the synchronization mutexes of the table.
+ *
+ * This function sets up the print, death, and meal mutexes used to
+ * coordinate philosopher threads. If any mutex fails to initialize,
+ * an error is reported and initialization stops.
+ *
+ * @param table Pointer to the simulation table holding the mutexes.
+ * @return 0 on success, 1 if any mutex initialization fails.
+ */
 int			init_forks(t_table *table);
 /**
  * @brief Initialize the synchronization mutexes of the table.
