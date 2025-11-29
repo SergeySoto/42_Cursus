@@ -1,5 +1,0 @@
-Instrucciones:
-
-- Crear una cuenta de GitHub
-
-- Asociar tu clave SSH a GitHub
