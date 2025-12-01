@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ssoto-su <ssoto-su@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 19:38:54 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/11/21 14:17:18 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/12/01 12:11:20 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,23 @@ int			init_forks(t_table *table);
  * @return 0 on success, 1 if any mutex initialization fails.
  */
 int			init_mutex(t_table *table);
-//Utils
+/**
+ * @brief Allocates memory for philosophers and forks arrays.
+ *
+ * This function allocates two dynamic arrays needed for the dining philosophers
+ * simulation:
+ * - An array of t_philo structures (philosophers)
+ * - An array of pthread_mutex_t structures (forks)
+ *
+ * Both arrays have a length equal to table->num_philo.
+ *
+ * @param table Pointer to the main table structure containing simulation data.
+ * @return 0 on success, 1 on allocation failure.
+ * @note On failure, the function:
+ *       - Prints an error message to stdout
+ *       - Destroys the three pre-initialized mutexes (print_mutex, death_mutex, meal_mutex)
+ *       - Frees any previously allocated memory (if forks allocation fails)
+ */
 int			mem_alloc(t_table *table);
 int			hollocaust_mutex(t_table *table, int size);
 long long	get_time(void);
