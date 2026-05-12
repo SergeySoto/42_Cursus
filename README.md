@@ -1,6 +1,6 @@
 # 42_Cursus
 
-A comprehensive collection of projects completed during the 42 School programming curriculum (Cursus). This repository showcases a journey through foundational and advanced programming challenges, including C, C++, Python, Makefile, and more.
+A comprehensive collection of projects completed during the 42 School programming curriculum (Cursus). This repository showcases a journey through foundational and advanced programming challenges.
 
 ---
 
@@ -18,17 +18,19 @@ A comprehensive collection of projects completed during the 42 School programmin
 
 ## Overview
 
-This repository contains multiple subprojects and exercises developed as part of the 42 Cursus. Each subproject explores different aspects of programming, such as algorithms, memory management, system-level programming, scripting, and more.
+This repository contains multiple subprojects and exercises developed as part of the 42 Cursus. Each subproject explores different aspects of programming, such as algorithms, memory management, system calls, and computer graphics.
 
 ---
 
 ## Language Composition
 
-```
-- C: 90.6%
-- C++: 6%
-- Makefile: 0.9%
-- CMake: 0.6%
+```text
+- C: 87.3%
+- C++: 7.2%
+- CMake: 2.1%
+- Makefile: 1.6%
+- Python: 1.0%
+- JavaScript: 0.3%
 - Other: 0.5%
 ```
 
@@ -36,16 +38,15 @@ This repository contains multiple subprojects and exercises developed as part of
 
 ## Projects
 
-Below are some typical projects/modules you might find inside this repository (update according to your actual directory structure):
+Below are the projects currently present in this repository:
 
-- **Libft** — Standard C library implementation
-- **ft_printf** — Recreation of the printf function
+- **new_libft** — Standard C library implementation
+- **printf** — Recreation of the `printf` function
 - **get_next_line** — Line-by-line file reading
-- **Born2beroot** — Linux system & security setup
-- **push_swap** — Sorting algorithm visualizer
-- **Pipex** — Unix pipe and process exercise
-- **Philosophers** — Multithreading challenges
-- **C++ Modules** — Foundations of C++ and OOP
+- **fractol** — 2D fractal rendering program
+- **push_swap** — Sorting algorithm project using two stacks
+- **pipex** — Unix pipe and process execution exercise
+- **philo** — Multithreading and concurrency challenges (Philosophers)
 
 > _Note: Please refer to each subfolder for more details, requirements, and instructions specific to the project._
 
@@ -58,8 +59,6 @@ Below are some typical projects/modules you might find inside this repository (u
 - A UNIX-like OS (Linux or macOS recommended)
 - gcc / clang (for C and C++)
 - make
-- python3 (for Python scripts, if any)
-- Node.js (if JavaScript projects are included)
 
 ### Cloning the Repository
 
@@ -79,9 +78,6 @@ cd <project-folder>
 make
 ./<executable>
 ```
-
-- For C++ modules, navigate to the respective directory and follow project-specific instructions.
-- For Python/JavaScript scripts, execute them directly with `python3` or `node`.
 
 ---
 
