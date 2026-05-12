@@ -6,14 +6,14 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 13:37:56 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/06/09 17:48:10 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/06/06 17:09:16 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "get_next_line.h"
 
-int	ft_strlen_gnl(char *str, char c)
+int	ft_strlen(char *str , char c)
 {
 	int	i;
 
@@ -23,21 +23,33 @@ int	ft_strlen_gnl(char *str, char c)
 	return (i);
 }
 
-char	*ft_strdup_gnl(const char *s)
+/*int	ft_strlenv2(char *str)
 {
+	int	i;
+
+	i = 0;
+	while (str[i] != '\n' || str[i] != '\0')
+		i++;
+	return (i);
+}*/
+
+char	*ft_strdup(const char *s)
+{
+	int		len;
 	char	*result;
-	int		i;
+	int	i;
 
 	if (!s)
 		return (NULL);
 	i = 0;
 	while (s[i] != '\0')
 		i++;
-	result = (char *)malloc((sizeof(char)) * (i + 1));
+	len = i;
+	result = (char *)malloc(len * (sizeof(char)));
 	if (!result)
 		return (NULL);
 	i = 0;
-	while (s[i] != '\0')
+	while (result[i] != '\0')
 	{
 		result[i] = s[i];
 		i++;
@@ -46,7 +58,7 @@ char	*ft_strdup_gnl(const char *s)
 	return (result);
 }
 
-char	*ft_strchr_gnl(char *s, int c)
+char	*ft_strchr(char *s, int c)
 {
 	int	i;
 
@@ -63,11 +75,11 @@ char	*ft_strchr_gnl(char *s, int c)
 		return (NULL);
 }
 
-char	*ft_substr_gnl(char *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, unsigned int start, size_t len)
 {
 	char	*str;
 	size_t	size_s;
-	size_t	i;
+	size_t		i;
 
 	i = 0;
 	if (!s)
@@ -89,16 +101,17 @@ char	*ft_substr_gnl(char *s, unsigned int start, size_t len)
 	return (str);
 }
 
-char	*ft_strjoin_gnl(char *line, char *buf)
+char	*ft_strjoin(char *line, char *buf)
 {
-	int		len_linebuf;
+	int	len_linebuf;
 	char	*str;
-	int		i;
-	int		j;
+	int	i;
+	int	j;
 
 	i = 0;
 	j = 0;
-	len_linebuf = ft_strlen(line, '\0') + ft_strlen(buf, '\0');
+
+	len_linebuf = ft_strlen(line,'\0') + ft_strlen(buf,'\0');
 	str = malloc((len_linebuf + 1 * sizeof(char)));
 	if (!str)
 		return (NULL);

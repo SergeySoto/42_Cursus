@@ -14,6 +14,7 @@
 
 void	check_command_i(char **argv, t_pipe *pipex)
 {
+	(void)argv;
 	if (!pipex->path1)
 	{
 		free_all(pipex->env_path, NULL);
@@ -84,7 +85,7 @@ void	second_child(t_pipe *pipex, char **envp, char **argv)
 	}
 }
 
-int	father(t_pipe *pipex, char **envp, char **argv)
+int	father(t_pipe *pipex, char**envp, char **argv)
 {
 	first_child(pipex, envp, argv);
 	second_child(pipex, envp, argv);

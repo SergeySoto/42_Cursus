@@ -6,7 +6,7 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:20:40 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/09/23 18:00:59 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:13:28 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	set_index(t_stack **stack)
 	t_node	*smallest;
 	int		i;
 
-	i = 1;
-	while (i <= (*stack)->len)
+	i = 0;
+	while (i < (*stack)->len)
 	{
 		smallest = find_smallest_node(stack);
 		if (smallest)
@@ -44,37 +44,48 @@ void	set_index(t_stack **stack)
 	}
 }
 
-t_node	*cheapest(t_stack **stack)
+t_node	*find_target(t_stack **stack_a, t_node *node_b)
 {
-	t_node	*cheapest;
+	int		i;
+	int		min_diff;
+	t_node	*target;
 	t_node	*current;
+	int		diff;
 
-	current = (*stack)->node_lst;
-	cheapest = current;
-	while (1)
+	diff = 0;
+	min_diff = INT_MAX;
+	target = NULL;
+	i = 0;
+	current = (*stack_a)->node_lst;
+	while (i < (*stack_a)->len)
 	{
-		if (current->total_cost < cheapest->total_cost)
-			cheapest = current;
+		diff = current->data - node_b->data;
+		if (diff > 0 && diff < min_diff)
+		{
+			min_diff = diff;
+			target = current;
+		}
+		i++;
 		current = current->next;
-		if (current == (*stack)->node_lst)
-			break ;
 	}
-	return (cheapest);
+	if (!target)
+		target = find_smallest_node(stack_a);
+	return (target);
 }
 
-int	node_size(t_node **stack)
+void	set_target(t_stack **stack_a, t_stack **stack_b)
 {
-	t_node	*aux;
 	int		i;
+	t_node	*target_node;
+	t_node	*aux;
 
+	aux = (*stack_b)->node_lst;
 	i = 0;
-	aux = (*stack);
-	while (1)
+	while (i < (*stack_b)->len)
 	{
+		target_node = find_target(stack_a, aux);
+		(*aux).target = target_node->data;
 		i++;
 		aux = aux->next;
-		if ((*stack) == aux)
-			break ;
 	}
-	return (i);
 }

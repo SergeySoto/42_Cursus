@@ -6,7 +6,7 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 11:35:52 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/06/20 18:20:38 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/06/06 17:04:36 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-char	*get__line(int fd, char *line)
+char *get__line(int fd, char *line)
 {
-	int		ch_read;
-	char	*buf;
+	int ch_read;
+	char *buf;
 
 	if (!line)
-		line = ft_strdup_gnl("");
+		line = ft_strdup("");
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf || !line)
 		return (NULL);
 	ch_read = 1;
-	while (ch_read > 0 && ft_strchr_gnl(line, '\n') == NULL)
+	while (ch_read > 0 && ft_strchr(line, '\n') == NULL)
 	{
 		ch_read = read(fd, buf, BUFFER_SIZE);
 		if (ch_read < 0)
@@ -37,63 +37,81 @@ char	*get__line(int fd, char *line)
 			return (NULL);
 		}
 		buf[ch_read] = '\0';
-		line = ft_strjoin_gnl(line, buf);
+		line = ft_strjoin(line, buf);
 	}
 	free(buf);
 	return (line);
 }
 
-char	*cut__line(char *line)
-{
-	int		i;
-	char	*aux;
+// char *cut__line(char *line)
+// {
+// 	int i;
+// 	char *aux;
+// 	char *rest;
 
-	i = 0;
-	if (!line || !line[0])
+// 	i = 0;
+// 	while (line[i] != '\n' && line[i])
+// 		i++;
+// 	aux = ft_substr(line, 0, i + (line[i] == '\n' ? 1 : 0));
+// 	if (!aux)
+// 	{
+// 		free(line);
+// 		return (NULL);
+// 	}
+// 	rest = ft_substr(line, i + (line[i] == '\n' ? 1 : 0), ft_strlen(line + i + (line[i] == '\n' ? 1 : 0), '\0'));
+// 	if (!rest)
+// 	{
+// 		free(aux);
+// 		return (NULL);
+// 	}
+// 	free(line);
+// 	line = rest;
+// 	free(rest);
+// 	return (aux);
+// }
+
+char *cut__line(char **line)
+{
+	int i;
+	char *aux;
+	char *rest;
+
+	if (!*line)
+	{
+		free(*line);
 		return (NULL);
-	while (line[i] && line[i] != '\n')
+	}
+	i = 0;
+	while ((*line)[i] && (*line)[i] != '\n')
 		i++;
-	if (line[i] == '\n')
+	if ((*line)[i] == '\n')
 		i++;
-	aux = ft_substr_gnl(line, 0, i);
+	aux = ft_substr(*line, 0, i);
 	if (!aux)
+	{
+		free(*line);
+		return (NULL);
+	}
+	rest = ft_substr(*line, i, ft_strlen(*line + i, '\0'));
+	if (!rest)
 	{
 		free(aux);
 		return (NULL);
 	}
+	free(*line);
+	*line = rest;
+	// free(rest);
 	return (aux);
 }
 
-char	*update_static(char *line)
+char *get_next_line(int fd)
 {
-	char	*rest;
-	int		i;
-
-	i = 0;
-	while (line[i] != '\n' && line[i] != '\0')
-		i++;
-	if (line[i] == '\n')
-		i++;
-	rest = ft_substr_gnl(line, i, ft_strlen_gnl(line + i, '\0'));
-	free(line);
-	if (!rest)
-	{
-		free(rest);
-		return (NULL);
-	}
-	return (rest);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*line;
-	char		*new_line;
+	static char *line;
+	char *new_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-	{
-		free(line);
 		return (NULL);
-	}
+	new_line = NULL;
 	line = get__line(fd, line);
 	if (!line || line[0] == '\0')
 	{
@@ -101,15 +119,38 @@ char	*get_next_line(int fd)
 		line = NULL;
 		return (NULL);
 	}
-	new_line = cut__line(line);
+	new_line = cut__line(&line);
 	if (!new_line)
 	{
 		free(line);
 		line = NULL;
 		return (NULL);
 	}
-	line = update_static(line);
 	return (new_line);
 }
 
+int main(void)
+{
+	int fd;
+	static char *line;
 
+	line = NULL;
+	fd = open("file.txt", O_RDONLY);
+	/*if (!line)
+		line = get_next_line(fd);
+	while (line != NULL)
+	{
+		line = get_next_line(fd);
+		printf("%s", line);
+	}*/
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	free(line);
+	close(fd);
+	return (0);
+}

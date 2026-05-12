@@ -6,7 +6,7 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 17:09:27 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/09/19 20:08:25 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:10:28 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,59 +52,4 @@ long	ft_atol(char *str)
 			return (res);
 	}
 	return (res * symbol);
-}
-
-t_node	*find_smallest_node(t_stack **stack)
-{
-	t_node	*smallest;
-	t_node	*current;
-	int		i;
-
-	smallest = NULL;
-	current = (*stack)->node_lst;
-	i = 0;
-	while (i < (*stack)->len)
-	{
-		if (current->index == -1)
-		{
-			smallest = current;
-			break ;
-		}
-		current = current->next;
-		i++;
-	}
-	while (i < (*stack)->len)
-	{
-		if (current->data < smallest->data && current->index == -1)
-			smallest = current;
-		current = current->next;
-		i++;
-	}
-	return (smallest);
-}
-
-t_node	*find_biggest_node(t_stack **stack)
-{
-	t_node	*biggest;
-	t_node	*current;
-	int		i;
-
-	current = (*stack)->node_lst;
-	biggest = current;
-	i = 0;
-	while (i < (*stack)->len)
-	{
-		if (current->data > biggest->data)
-			biggest = current;
-		current = current->next;
-		i++;
-	}
-	return (biggest);
-}
-
-int	ft_abs(int x)
-{
-	if (x < 0)
-		return (-x);
-	return (x);
 }

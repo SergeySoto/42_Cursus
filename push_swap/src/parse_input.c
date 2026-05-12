@@ -6,7 +6,7 @@
 /*   By: ssoto-su <ssoto-su@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 18:10:28 by ssoto-su          #+#    #+#             */
-/*   Updated: 2025/09/23 18:52:43 by ssoto-su         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:33:30 by ssoto-su         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,18 +37,18 @@ long	*parse_input(int argc, char **argv, int *len)
 	list = parse_array(arr, len);
 	if (!list)
 		return (0);
+	if (is_sorted(list, *len))
+	{
+		free_array(arr);
+		free_long(list);
+		exit(0);
+	}
 	if (!parse_list(list, len))
 	{
 		free_long(list);
 		free_array(arr);
 		printf_error();
 		return (0);
-	}
-	if (is_sorted(list, *len))
-	{
-		free_array(arr);
-		free_long(list);
-		exit(0);
 	}
 	free_array(arr);
 	return (list);
