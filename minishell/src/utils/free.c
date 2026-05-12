@@ -1,0 +1,105 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: carmegon <carmegon@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/11 11:36:34 by carmegon          #+#    #+#             */
+/*   Updated: 2026/03/20 00:49:00 by carmegon         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../includes/minishell.h"
+
+void	*free_token(char *str, char **env)
+{
+	int	i;
+
+	if (env)
+	{
+		i = 0;
+		while (env && env[i])
+		{
+			free(env[i]);
+			i++;
+		}
+		free(env);
+	}
+	if (str)
+		free(str);
+	return (NULL);
+}
+
+void	free_struct_token(t_token **token)
+{
+	t_token	*temp;
+
+	if (!token || !*token)
+		return ;
+	while ((*token) != NULL)
+	{
+		temp = (*token)->next;
+		free((*token)->content);
+		free((*token));
+		(*token) = temp;
+	}
+	*token = NULL;
+}
+
+void	free_env(t_env **envp)
+{
+	t_env	*temp;
+
+	if (!envp || !*envp)
+		return ;
+	while ((*envp) != NULL)
+	{
+		temp = (*envp)->next;
+		free((*envp)->key);
+		free((*envp)->value);
+		free((*envp));
+		(*envp) = temp;
+	}
+	*envp = NULL;
+}
+
+void	free_cmd(t_cmd **cmd)
+{
+	t_cmd	*tmp;
+
+	if (!cmd || !*cmd)
+		return ;
+	while ((*cmd) != NULL)
+	{
+		free_token((*cmd)->cmd_path, (*cmd)->args);
+		if ((*cmd)->fd_in > 2)
+			close((*cmd)->fd_in);
+		if ((*cmd)->fd_out > 2)
+			close((*cmd)->fd_out);
+		if ((*cmd)->infile)
+			free((*cmd)->infile);
+		if ((*cmd)->outfile)
+			free((*cmd)->outfile);
+		tmp = (*cmd)->next;
+		free((*cmd));
+		(*cmd) = tmp;
+	}
+	*cmd = NULL;
+}
+
+void	free_struct_mini(t_mini *mini)
+{
+	if (!mini)
+		return ;
+	free_iteration_data(mini);
+	if (mini->env)
+		free_env(&mini->env);
+	if (mini->input || mini->env_array)
+	{
+		free_token(mini->input, mini->env_array);
+		mini->input = NULL;
+		mini->env_array = NULL;
+		mini->env = NULL;
+	}
+}
