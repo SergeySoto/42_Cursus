@@ -1,6 +1,18 @@
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange() : mapBit[" "] = 0; {}
+BitcoinExchange::BitcoinExchange() {}
+
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &copy) {
+	this->mapBit = copy.mapBit;
+}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange &copy) {
+	if (this != &copy)
+		this->mapBit = copy.mapBit;
+	return *this;
+}
+
+BitcoinExchange::~BitcoinExchange() {}
 
 bool BitcoinExchange::loadDataBase(const std::string &db) {
 	std::ifstream file(db.c_str());
@@ -32,11 +44,32 @@ void BitcoinExchange::bitCoinCalculator(const std::string& file) {
 		return ;
 	}
 	std::string line;
+	std::getline(fl, line);
 	while (std::getline(fl, line)) {
 		std::string::size_type pos = line.find(" | ");
-		if (pos == std::string::npos)
+		if (pos == std::string::npos) {
+			std::cerr << "Error: bad input => " << line << std::endl;
 			continue ;
-		
+		}
+		std::string date = line.substr(0, pos);
+		std::string valueStr = line.substr(pos + 3);
+		if (!isValidDate(date)) {
+			std::cerr << "Error: bad input => " << date << std::endl;
+			continue ;
+		}
+		if (!isValidValue(valueStr))
+			continue ;
+		std::map<std::string, float>::iterator it;
+		it = mapBit.upper_bound(date);
+		if (it == mapBit.begin()) {
+			std::cerr << "Date too old" << std::endl; 
+			continue ;
+		}
+		--it;
+		float num;
+		std::istringstream ssnum(valueStr);
+		ssnum >> num;
+		std::cout << date << " => " << num << " = " << num * it->second << std::endl;
 	}
 }
 
