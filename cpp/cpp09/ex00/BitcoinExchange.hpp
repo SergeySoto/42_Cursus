@@ -7,12 +7,14 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <iomanip>
 
 class BitcoinExchange {
 	private:
 		std::map <std::string, float> mapBit;
 		bool isValidDate(const std::string &date);
 		bool isValidValue(const std::string &valStr);
+		std::string trim(const std::string &str);
 	public:
 		BitcoinExchange();
 		BitcoinExchange(const BitcoinExchange &copy);

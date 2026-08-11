@@ -26,10 +26,10 @@ bool BitcoinExchange::loadDataBase(const std::string &db) {
 		std::string::size_type pos = line.find(',');
 		if (pos == std::string::npos)
 			continue ;
-		std::string date = line.substr(0, pos);
-		std::string flt = line.substr(pos + 1);
+		std::string date = trim(line.substr(0, pos));
+		std::string flt = trim(line.substr(pos + 1));
 		std::istringstream conversionStream(flt);
-		float num;
+		double num;
 		if (conversionStream >> num) {
 			this->mapBit[date] = num;
 		}
@@ -44,15 +44,18 @@ void BitcoinExchange::bitCoinCalculator(const std::string& file) {
 		return ;
 	}
 	std::string line;
-	std::getline(fl, line);
+	if (!std::getline(fl, line)) {
+		std::cerr << "Error: empy file" << std::endl;
+		return ;
+	}
 	while (std::getline(fl, line)) {
 		std::string::size_type pos = line.find(" | ");
 		if (pos == std::string::npos) {
 			std::cerr << "Error: bad input => " << line << std::endl;
 			continue ;
 		}
-		std::string date = line.substr(0, pos);
-		std::string valueStr = line.substr(pos + 3);
+		std::string date = trim(line.substr(0, pos));
+		std::string valueStr = trim(line.substr(pos + 3));
 		if (!isValidDate(date)) {
 			std::cerr << "Error: bad input => " << date << std::endl;
 			continue ;
@@ -66,7 +69,7 @@ void BitcoinExchange::bitCoinCalculator(const std::string& file) {
 			continue ;
 		}
 		--it;
-		float num;
+		double num;
 		std::istringstream ssnum(valueStr);
 		ssnum >> num;
 		std::cout << date << " => " << num << " = " << num * it->second << std::endl;
@@ -95,19 +98,20 @@ bool BitcoinExchange::isValidDate(const std::string &date) {
 	if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) return false;
 	if (month == 2) {
 		bool isLeap = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
-		if (isLeap) 
+		if (isLeap) { 
 			if (day > 29)
 				return false;
-		else
+		}
+		else {
 			if (day > 28)
 				return false;
+		}
 	}
-	//if returns false it should print error message
 	return true;
 }
 
 bool BitcoinExchange::isValidValue(const std::string &valStr) {
-	float num;
+	double num;
 	std::istringstream ssnum(valStr);
 	if (!(ssnum >> num) || !ssnum.eof()) return false;
 	if (num < 0) {
@@ -119,4 +123,15 @@ bool BitcoinExchange::isValidValue(const std::string &valStr) {
 		return false;
 	}
 	return true;
+}
+
+std::string BitcoinExchange::trim(const std::string &str) {
+	std::string spaces = " \t\r\n\v\f";
+	std::string::size_type begin = str.find_first_not_of(spaces);
+	if (begin != std::string::npos) {
+		std::string strclean = str.substr(begin, str.find_last_not_of(spaces) - begin + 1);
+		return strclean;
+	}
+	else
+		return std::string();
 }
