@@ -3,6 +3,7 @@
 
 #include <stack>
 #include <iostream>
+#include <string>
 
 class RPN {
 	private:
@@ -12,6 +13,7 @@ class RPN {
 		RPN(const RPN &copy);
 		RPN& operator=(const RPN &copy);
 		~RPN();
+		void operation(const std::string &str);
 };
 
 #endif

@@ -113,7 +113,10 @@ bool BitcoinExchange::isValidDate(const std::string &date) {
 bool BitcoinExchange::isValidValue(const std::string &valStr) {
 	double num;
 	std::istringstream ssnum(valStr);
-	if (!(ssnum >> num) || !ssnum.eof()) return false;
+	if (!(ssnum >> num) || !ssnum.eof()) {
+		std::cerr << "Error: bad input => " << valStr << std::endl;
+		return false;
+	}
 	if (num < 0) {
 		std::cerr << "Error: not a positive number." << std::endl;
 		return false;
