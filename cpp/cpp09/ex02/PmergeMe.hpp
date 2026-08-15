@@ -9,6 +9,7 @@
 #include <ctime>
 #include <sstream>
 #include <climits>
+#include <cstdlib>
 
 class PmergeMe {
 	private:
@@ -17,7 +18,7 @@ class PmergeMe {
 		std::deque<unsigned int> _deq;
 		void fordJohnson(std::vector<unsigned int> &container);
 		void fordJohnson(std::deque<unsigned int> &container);
-		bool isValidNumber(const std::string &num);
+		bool extractNumber(const std::string &num);
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe &copy);
