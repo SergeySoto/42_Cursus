@@ -22,7 +22,7 @@ PmergeMe::~PmergeMe() {}
 bool PmergeMe::isValidNumber(const std::string &strnum) {
 	char *end = NULL;
 	long num = std::strtol(strnum.c_str(), &end, 10);
-	if (num < 0 || num > INT_MAX) {
+	if (num < 0 || num > INT_MAX || *end != '\0') {
 		std::cerr << "Error" << std::endl;
 		return false;
 	}
