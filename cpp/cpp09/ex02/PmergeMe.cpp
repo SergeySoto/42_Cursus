@@ -26,14 +26,14 @@ bool PmergeMe::isValidNumber(const std::string &strnum) {
 		std::cerr << "Error" << std::endl;
 		return false;
 	}
-	this->_vec.push_back(num);
-	this->_deq.push_back(num);
+	this->_vec.push_back(static_cast<unsigned int>(num));
+	this->_deq.push_back(static_cast<unsigned int>(num));
 	return true;
 }
 
 bool PmergeMe::process(int ac, char **av) {
 	std::string stringnum;
-	for (size_t i = 1; i < static_cast<size_t> (ac - 1); ++i) {
+	for (int i = 1; i < ac; ++i) {
 		std::istringstream iss(av[i]);
 		while (iss >> stringnum) {
 			if (!isValidNumber(stringnum))
