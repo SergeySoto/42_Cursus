@@ -35,9 +35,17 @@ void PmergeMe::printContainer(const std::vector<unsigned int> &container) {
 	std::cout << "\n";
 }
 
-void PmergeMe::fordJohnson(std::vector<unsigned int> &vector) {
-	if (this->_vec.size() < 2)
+void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
+	if (container.size() < 2)
 		return ;
+	std::vector<std::pair<unsigned int, unsigned int> > pairs_vector;
+	for (size_t i = 0; i < container.size() - 1; i += 2) {
+		pairs_vector.push_back((container[i] > container[i + 1]) 
+		? std::make_pair(container[i], container[i + 1]) 
+		: std::make_pair(container[i + 1], container[i]));
+	}
+	bool hasOdd = (container.size() % 2 != 0);
+	unsigned int oddVal = hasOdd ? container.back() : 0;
 }
 
 bool PmergeMe::process(int ac, char **av) {

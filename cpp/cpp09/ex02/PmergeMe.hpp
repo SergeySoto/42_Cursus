@@ -15,6 +15,7 @@ class PmergeMe {
 	private:
 		std::vector<unsigned int> _vec;
 		std::deque<unsigned int> _deq;
+		unsigned int odd;
 		void fordJohnson(std::vector<unsigned int> &container);
 		void fordJohnson(std::deque<unsigned int> &container);
 		bool extractNumber(const std::string &num);
