@@ -13,12 +13,12 @@
 
 class PmergeMe {
 	private:
-		std::string unsorted;
 		std::vector<unsigned int> _vec;
 		std::deque<unsigned int> _deq;
 		void fordJohnson(std::vector<unsigned int> &container);
 		void fordJohnson(std::deque<unsigned int> &container);
 		bool extractNumber(const std::string &num);
+		void printContainer(const std::vector<unsigned int> &container);
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe &copy);

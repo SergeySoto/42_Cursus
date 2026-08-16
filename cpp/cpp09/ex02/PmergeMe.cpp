@@ -3,14 +3,12 @@
 PmergeMe::PmergeMe() {}
 
 PmergeMe::PmergeMe(const PmergeMe& copy) {
-	this->unsorted = copy.unsorted;
 	this->_vec = copy._vec;
 	this->_deq = copy._deq;
 }
 
 PmergeMe& PmergeMe::operator=(const PmergeMe& copy) {
 	if (this != &copy) {
-		this->unsorted = copy.unsorted;
 		this->_vec = copy._vec;
 		this->_deq = copy._deq;
 	}
@@ -26,10 +24,20 @@ bool PmergeMe::extractNumber(const std::string &strnum) {
 		std::cerr << "Error" << std::endl;
 		return false;
 	}
-	this->unsorted += strnum + " ";
 	this->_vec.push_back(static_cast<unsigned int>(num));
 	this->_deq.push_back(static_cast<unsigned int>(num));
 	return true;
+}
+
+void PmergeMe::printContainer(const std::vector<unsigned int> &container) {
+	for (std::vector<unsigned int>::const_iterator it = container.begin(); it != container.end(); ++it)
+		std::cout << *it << " ";
+	std::cout << "\n";
+}
+
+void PmergeMe::fordJohnson(std::vector<unsigned int> &vector) {
+	if (this->_vec.size() < 2)
+		return ;
 }
 
 bool PmergeMe::process(int ac, char **av) {
@@ -41,6 +49,12 @@ bool PmergeMe::process(int ac, char **av) {
 				return false;
 		}
 	}
-	std::cout << "Before: " << unsorted << std::endl;
+	std::cout << "Before: ";
+	printContainer(this->_vec);
+	std::clock_t start1 = std::clock();
+	fordJohnson(this->_vec);
+	std::clock_t end1 = std::clock();
+	double time_vec = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC * 1000000.0;
+
 	return true;
 }
