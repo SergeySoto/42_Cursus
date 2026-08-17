@@ -15,11 +15,11 @@ class PmergeMe {
 	private:
 		std::vector<unsigned int> _vec;
 		std::deque<unsigned int> _deq;
-		unsigned int odd;
 		void fordJohnson(std::vector<unsigned int> &container);
 		void fordJohnson(std::deque<unsigned int> &container);
 		bool extractNumber(const std::string &num);
 		void printContainer(const std::vector<unsigned int> &container);
+		std::vector<std::pair<unsigned int, unsigned int> > newVecPair(std::vector<unsigned int> &container);
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe &copy);
