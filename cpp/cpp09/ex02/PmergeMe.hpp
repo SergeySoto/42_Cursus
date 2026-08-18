@@ -10,6 +10,7 @@
 #include <sstream>
 #include <climits>
 #include <cstdlib>
+#include <algorithm>
 
 class PmergeMe {
 	private:
@@ -20,6 +21,7 @@ class PmergeMe {
 		bool extractNumber(const std::string &num);
 		void printContainer(const std::vector<unsigned int> &container);
 		std::vector<std::pair<unsigned int, unsigned int> > newVecPair(std::vector<unsigned int> &container);
+		std::vector<size_t> generateJacob(size_t limit);
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe &copy);

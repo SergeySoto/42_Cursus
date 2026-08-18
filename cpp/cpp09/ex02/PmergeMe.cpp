@@ -76,6 +76,17 @@ std::vector<std::pair<unsigned int, unsigned int> > PmergeMe::newVecPair(std::ve
 	return pairs_vector;
 }
 
+std::vector<size_t> PmergeMe::generateJacob(size_t limit) {
+	std::vector<size_t> jacob;
+	jacob.push_back(0);
+	jacob.push_back(1);
+	while (jacob.back() < limit) {
+		size_t next = jacob[jacob.size() - 1] + 2 * jacob[jacob.size() - 2];
+		jacob.push_back(next);
+	}
+	return jacob;
+}
+
 void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
 	if (container.size() < 2)
 		return ;
@@ -96,17 +107,27 @@ void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
 			}
 		}
 	}
+	std::vector<unsigned int> original_winners = winners;
 	if (!pend.empty())
 		winners.insert(winners.begin(), pend[0]);
-	std::vector<unsigned int>::iterator it;
+	std::vector<size_t> jacob = generateJacob(pend.size());
+	size_t last_jacob = 1;
+	for (size_t i = 3; i < jacob.size(); ++i) {
+		size_t current_jacob = jacob[i];
+		if (current_jacob > pend.size())
+			current_jacob = pend.size();
+		for (size_t j = current_jacob - 1; j >= last_jacob; --j) {
+			std::vector<unsigned int>::iterator it;
+			std::vector<unsigned int>::iterator iterador_busqueda = std::find(winners.begin(), winners.end(), original_winners[j]);
+			it = std::lower_bound(winners.begin(), iterador_busqueda, pend[j]);
+			winners.insert(it, pend[j]);
+		}
+		last_jacob = current_jacob;
+	}
 	if (hasOdd) {
+		std::vector<unsigned int>::iterator it;
 		it = std::lower_bound(winners.begin(), winners.end(), oddVal);
 		winners.insert(it, oddVal);
-	}
-	int last_jacob = 1;
-	int current_jacob = 3;
-	while (last_jacob < pend.size()) {
-		
 	}
 	container = winners;
 }
@@ -126,6 +147,9 @@ bool PmergeMe::process(int ac, char **av) {
 	fordJohnson(this->_vec);
 	std::clock_t end1 = std::clock();
 	double time_vec = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC * 1000000.0;
-
+	std::cout << time_vec << std::endl;
+	printContainer(this->_vec);
+	//std::cout << "After: ";
+	//printContainer(this->_deq)
 	return true;
 }
