@@ -30,41 +30,24 @@ bool PmergeMe::extractNumber(const std::string &strnum) {
 }
 
 void PmergeMe::printContainer(const std::vector<unsigned int> &container) {
-	for (std::vector<unsigned int>::const_iterator it = container.begin(); it != container.end(); ++it)
+	std::vector<unsigned int>::const_iterator it = container.begin();
+	int count = 0;
+	for (; it != container.end() && count < 10; ++it, ++count)
 		std::cout << *it << " ";
+	if (container.size() > 10)
+		std::cout << "[...]";
 	std::cout << "\n";
 }
 
-/**
- * fordJhonson(std::vector<unsigned int> vec) {
- * 	std::vector<std::pair<int, int>>	new;
- * 	std::vector<int>					ganadores;
- * 	std::vector<int>					perdedores;
- * 	int									oddVal = -1;
- * 
- * 	if (vec.size < 2)
- * 		return (vec);
- * 	new = newVecPair(vec, oddVal);
- * 	
- * 	//Separas new en dos std::vector<int> | Ganadores y Perdedores
- * 	divideVecPair(new, ganadores, perdedores);
- * 	
- * 	//A los ganadores le agregas el primero de los perdedores
- * 	ganadores.pushback(perdedores[0]);
- * 	perdedores.pop();
- * 	
- * 	//A los perdedores le agregas el oddVal si existe;
- * 	ganadores = fordJhonson(ganadores);
- * 	if (oddVal > -1)
- * 		perdedores.pushback(oddVal);
- * 	
- * 	//perdedores insercion binaria ganadores
- * 	std::lower_bound(???);
- * 	return (ganadoers);
- * }
- */
-
-//std::vector<std::pair<int, int> PmergeMe::newVecPair(std::vector<unsigned int> &container, int &oddVal)
+void PmergeMe::printContainer(const std::deque<unsigned int> &container) {
+	std::deque<unsigned int>::const_iterator it = container.begin();
+	int count = 0;
+	for (; it != container.end() && count < 10; ++it, ++count)
+		std::cout << *it << " ";
+	if (container.size() > 10)
+		std::cout << "[...]";
+	std::cout << "\n";
+}
 
 std::vector<std::pair<unsigned int, unsigned int> > PmergeMe::newVecPair(std::vector<unsigned int> &container) {
 	std::vector<std::pair<unsigned int, unsigned int> > pairs_vector;
@@ -76,7 +59,18 @@ std::vector<std::pair<unsigned int, unsigned int> > PmergeMe::newVecPair(std::ve
 	return pairs_vector;
 }
 
-std::vector<size_t> PmergeMe::generateJacob(size_t limit) {
+std::deque<std::pair<unsigned int, unsigned int> > PmergeMe::newVecPair(std::deque<unsigned int> &container) {
+	std::deque<std::pair<unsigned int, unsigned int> > pairs_vector;
+	for (size_t i = 0; i < container.size() - 1; i += 2) {
+		pairs_vector.push_back((container[i] > container[i + 1]) 
+		? std::make_pair(container[i], container[i + 1]) 
+		: std::make_pair(container[i + 1], container[i]));
+	}
+	return pairs_vector;
+}
+
+std::vector<size_t> PmergeMe::generateJacob(size_t limit, std::vector<unsigned int> &container) {
+	(void)container;
 	std::vector<size_t> jacob;
 	jacob.push_back(0);
 	jacob.push_back(1);
@@ -87,30 +81,24 @@ std::vector<size_t> PmergeMe::generateJacob(size_t limit) {
 	return jacob;
 }
 
-void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
-	if (container.size() < 2)
-		return ;
-	bool hasOdd = (container.size() % 2 != 0);
-	unsigned int oddVal = hasOdd ? container.back() : 0;
-	std::vector<std::pair<unsigned int, unsigned int> > pairs_vector = newVecPair(container);
-	std::vector<unsigned int> winners;
-	for (size_t i = 0; i < pairs_vector.size(); ++i) {
-		winners.push_back(pairs_vector[i].first);
+std::deque<size_t> PmergeMe::generateJacob(size_t limit, std::deque<unsigned int> &container) {
+	(void)container;
+	std::deque<size_t> jacob;
+	jacob.push_back(0);
+	jacob.push_back(1);
+	while (jacob.back() < limit) {
+		size_t next = jacob[jacob.size() - 1] + 2 * jacob[jacob.size() - 2];
+		jacob.push_back(next);
 	}
-	fordJohnson(winners);
-	std::vector<unsigned int> pend;
-	for (size_t i = 0; i < winners.size(); ++i) {
-		for (size_t j = 0; j < pairs_vector.size(); ++j) {
-			if (winners[i] == pairs_vector[j].first) {
-				pend.push_back(pairs_vector[j].second);
-				break ;
-			}
-		}
-	}
+	return jacob;
+}
+
+std::vector<unsigned int> PmergeMe::jacobsthal(std::vector<unsigned int> &winners, std::vector<unsigned int> &pend,
+	bool &hasOdd, unsigned int &oddVal) {
 	std::vector<unsigned int> original_winners = winners;
 	if (!pend.empty())
 		winners.insert(winners.begin(), pend[0]);
-	std::vector<size_t> jacob = generateJacob(pend.size());
+	std::vector<size_t> jacob = generateJacob(pend.size(), winners);
 	size_t last_jacob = 1;
 	for (size_t i = 3; i < jacob.size(); ++i) {
 		size_t current_jacob = jacob[i];
@@ -129,7 +117,82 @@ void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
 		it = std::lower_bound(winners.begin(), winners.end(), oddVal);
 		winners.insert(it, oddVal);
 	}
-	container = winners;
+	return winners;
+}
+
+std::deque<unsigned int> PmergeMe::jacobsthal(std::deque<unsigned int> &winners, std::deque<unsigned int> &pend,
+	bool &hasOdd, unsigned int &oddVal) {
+	std::deque<unsigned int> original_winners = winners;
+	if (!pend.empty())
+		winners.insert(winners.begin(), pend[0]);
+	std::deque<size_t> jacob = generateJacob(pend.size(), winners);
+	size_t last_jacob = 1;
+	for (size_t i = 3; i < jacob.size(); ++i) {
+		size_t current_jacob = jacob[i];
+		if (current_jacob > pend.size())
+			current_jacob = pend.size();
+		for (size_t j = current_jacob - 1; j >= last_jacob; --j) {
+			std::deque<unsigned int>::iterator it;
+			std::deque<unsigned int>::iterator iterador_busqueda = std::find(winners.begin(), winners.end(), original_winners[j]);
+			it = std::lower_bound(winners.begin(), iterador_busqueda, pend[j]);
+			winners.insert(it, pend[j]);
+		}
+		last_jacob = current_jacob;
+	}
+	if (hasOdd) {
+		std::deque<unsigned int>::iterator it;
+		it = std::lower_bound(winners.begin(), winners.end(), oddVal);
+		winners.insert(it, oddVal);
+	}
+	return winners;
+}
+
+void PmergeMe::fordJohnson(std::vector<unsigned int> &container) {
+	if (container.size() < 2)
+		return ;
+	bool hasOdd = (container.size() % 2 != 0);
+	unsigned int oddVal = hasOdd ? container.back() : 0;
+	(void)oddVal;
+	std::vector<std::pair<unsigned int, unsigned int> > pairs_vector = newVecPair(container);
+	std::vector<unsigned int> winners;
+	for (size_t i = 0; i < pairs_vector.size(); ++i) {
+		winners.push_back(pairs_vector[i].first);
+	}
+	fordJohnson(winners);
+	std::vector<unsigned int> pend;
+	for (size_t i = 0; i < winners.size(); ++i) {
+		for (size_t j = 0; j < pairs_vector.size(); ++j) {
+			if (winners[i] == pairs_vector[j].first) {
+				pend.push_back(pairs_vector[j].second);
+				break ;
+			}
+		}
+	}
+	container = jacobsthal(winners, pend, hasOdd, oddVal);
+}
+
+void PmergeMe::fordJohnson(std::deque<unsigned int> &container) {
+	if (container.size() < 2)
+		return ;
+	bool hasOdd = (container.size() % 2 != 0);
+	unsigned int oddVal = hasOdd ? container.back() : 0;
+	(void)oddVal;
+	std::deque<std::pair<unsigned int, unsigned int> > pairs_vector = newVecPair(container);
+	std::deque<unsigned int> winners;
+	for (size_t i = 0; i < pairs_vector.size(); ++i) {
+		winners.push_back(pairs_vector[i].first);
+	}
+	fordJohnson(winners);
+	std::deque<unsigned int> pend;
+	for (size_t i = 0; i < winners.size(); ++i) {
+		for (size_t j = 0; j < pairs_vector.size(); ++j) {
+			if (winners[i] == pairs_vector[j].first) {
+				pend.push_back(pairs_vector[j].second);
+				break ;
+			}
+		}
+	}
+	container = jacobsthal(winners, pend, hasOdd, oddVal);
 }
 
 bool PmergeMe::process(int ac, char **av) {
@@ -141,15 +204,27 @@ bool PmergeMe::process(int ac, char **av) {
 				return false;
 		}
 	}
-	std::cout << "Before: ";
+	std::cout << "Before: " << std::setw(3);
 	printContainer(this->_vec);
+	//std::cout << "Deque Before: " << std::setw(4);
+	//printContainer(this->_deq);
 	std::clock_t start1 = std::clock();
 	fordJohnson(this->_vec);
 	std::clock_t end1 = std::clock();
-	double time_vec = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC * 1000000.0;
-	std::cout << time_vec << std::endl;
+	std::clock_t start2 = std::clock();
+	fordJohnson(this->_deq);
+	std::clock_t end2 = std::clock();
+	std::cout << "After: " << std::setw(4);
 	printContainer(this->_vec);
-	//std::cout << "After: ";
-	//printContainer(this->_deq)
+	//std::cout << "Deque After: " << std::setw(4);
+	//printContainer(this->_deq);
+	double time_vec = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << this->_vec.size() 
+		<< " elements with std::vector : " 
+		<< std::fixed << std::setprecision(5) << std::setw(7) << time_vec << " us" << std::endl;
+	double time_deq = static_cast<double>(end2 - start2) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << this->_deq.size() 
+		<< " elements with std::deque : " 
+		<< std::fixed << std::setprecision(5) << std::setw(8) << time_deq << " us" << std::endl;
 	return true;
 }
