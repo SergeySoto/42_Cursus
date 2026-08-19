@@ -206,7 +206,7 @@ bool PmergeMe::process(int ac, char **av) {
 	}
 	std::cout << "Before: " << std::setw(3);
 	printContainer(this->_vec);
-	//std::cout << "Deque Before: " << std::setw(4);
+	//std::cout << "Before: " << std::setw(4);
 	//printContainer(this->_deq);
 	std::clock_t start1 = std::clock();
 	fordJohnson(this->_vec);
@@ -216,15 +216,15 @@ bool PmergeMe::process(int ac, char **av) {
 	std::clock_t end2 = std::clock();
 	std::cout << "After: " << std::setw(4);
 	printContainer(this->_vec);
-	//std::cout << "Deque After: " << std::setw(4);
+	//std::cout << "After: " << std::setw(4);
 	//printContainer(this->_deq);
-	double time_vec = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC;
+	double time_vec = static_cast<double>((end1 - start1) / static_cast<double>(CLOCKS_PER_SEC)) * 1000000.0;
+	double time_deq = static_cast<double>((end2 - start2) / static_cast<double>(CLOCKS_PER_SEC)) * 1000000.0;
 	std::cout << "Time to process a range of " << this->_vec.size() 
-		<< " elements with std::vector : " 
-		<< std::fixed << std::setprecision(5) << std::setw(7) << time_vec << " us" << std::endl;
-	double time_deq = static_cast<double>(end2 - start2) / CLOCKS_PER_SEC;
+		<< " elements with std::vector : "
+		<< std::fixed << std::setprecision(5) << std::setw(9) << time_vec << " us" << std::endl;
 	std::cout << "Time to process a range of " << this->_deq.size() 
-		<< " elements with std::deque : " 
-		<< std::fixed << std::setprecision(5) << std::setw(8) << time_deq << " us" << std::endl;
+		<< " elements with std::deque  : "
+		<< std::fixed << std::setprecision(5) << std::setw(9) << time_deq << " us" << std::endl;
 	return true;
 }
