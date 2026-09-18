@@ -7,10 +7,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/www/html \
-    curl -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz \
+    && curl -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz \
     && tar -xzf /tmp/wordpress.tar.gz -C /var/www/ \
     && mv /var/www/wordpress/* /var/www/html/ \
-    && rm -rf /tmp/wordpress.tar.gz /var/www/wordpress
+    && rm -rf /tmp/wordpress.tar.gz /var/www/wordpress \
     && chown -R www-data:www-data /var/www/html
 
 RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
