@@ -26,6 +26,7 @@ if [ ! -f "$INIT_MARKER" ]; then
     TEMP_SERVER_PID=$!
 
     until mariadb-admin \
+        --host=localhost \
         --socket="$MYSQL_SOCKET" \
         ping --silent
     do
@@ -33,6 +34,7 @@ if [ ! -f "$INIT_MARKER" ]; then
     done
 
     mariadb \
+        --host=localhost \
         --socket="$MYSQL_SOCKET" \
         -u root <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';

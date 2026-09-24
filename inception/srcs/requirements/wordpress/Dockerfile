@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     php-fpm \
     php-mysql \
     curl \
+    mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/www/html \
