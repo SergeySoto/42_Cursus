@@ -1,6 +1,6 @@
 NAME		= inception
 COMPOSE		= srcs/docker-compose.yml
-DATA_DIR	= /home/$(USER)/data
+DATA_DIR	= $(HOME)/data
 
 all: up
 
