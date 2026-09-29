@@ -24,6 +24,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN mkdir -p /run/php
 
+WORKDIR /var/www/html
+
 EXPOSE 9000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
