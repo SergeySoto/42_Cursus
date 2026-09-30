@@ -48,6 +48,14 @@ services:
     env_file:
       - .env
 
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    image: redis
+    restart: unless-stopped
+    networks:
+      - inception
+
 networks:
   inception:
     driver: bridge
