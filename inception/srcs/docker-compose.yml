@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
+      - redis
     networks:
       - inception
     volumes:
