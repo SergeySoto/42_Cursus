@@ -2,7 +2,7 @@ services:
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
-    image: mariadb:v1
+    image: mariadb
     restart: unless-stopped
     networks:
       - inception
@@ -13,14 +13,47 @@ services:
     secrets:
       - db_password
       - db_root_password
+  adminer:
+    build: ./requirements/bonus/adminer
+    container_name: adminer
+    image: adminer
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+  static_site:
+    build: ./requirements/bonus/static_site
+    container_name: static_site
+    image: static_site
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    networks:
+      - inception
+  portainer:
+    build: ./requirements/bonus/portainer
+    container_name: portainer
+    image: portainer:v1
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - inception
 
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
-    image: wordpress:v1
+    image: wordpress
     restart: unless-stopped
     depends_on:
       - mariadb
+      - redis
     networks:
       - inception
     volumes:
@@ -35,7 +68,7 @@ services:
   nginx:
     build: ./requirements/nginx
     container_name: nginx
-    image: nginx:v1
+    image: nginx
     restart: unless-stopped
     depends_on:
       - wordpress
@@ -47,6 +80,33 @@ services:
       - wordpress_data:/var/www/html
     env_file:
       - .env
+
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    image: redis
+    restart: unless-stopped
+    networks:
+      - inception
+
+  ftp:
+    build: ./requirements/bonus/ftp
+    container_name: ftp
+    image: ftp
+    restart: unless-stopped
+    depends_on:
+      - wordpress
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/html
+    env_file:
+      - .env
+    secrets:
+      - ftp_password
 
 networks:
   inception:
@@ -65,6 +125,12 @@ volumes:
       type: none
       o: bind
       device: ${HOME}/data/wordpress
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/portainer
 
 secrets:
   db_password:
@@ -75,3 +141,5 @@ secrets:
     file: ../secrets/wp_admin_password.txt
   wp_user_password:
     file: ../secrets/wp_user_password.txt
+  ftp_password:
+    file: ../secrets/ftp_password.txt

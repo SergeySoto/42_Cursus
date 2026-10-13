@@ -29,7 +29,10 @@ do
 	sleep 2
 done
 
-
+until redis-cli -h redis ping > /dev/null 2>&1
+do
+	sleep 1
+done
 
 cd "$WORDPRESS_DIR"
 
@@ -62,18 +65,10 @@ if [ -n "${WP_USER:-}" ] && [ -n "${WP_USER_EMAIL:-}" ] \
 		--allow-root
 fi
 
-if [ "${REDIS_ENABLED:-false}" = "true" ]; then
-	until redis-cli -h redis ping > /dev/null 2>&1
-	do
-		sleep 1
-	done
-
-	if ! wp plugin is-active redis-cache --allow-root; then
-		wp config set WP_REDIS_HOST redis --allow-root --type=constant
-		wp plugin install redis-cache --activate --allow-root
-		wp redis enable --allow-root
-	fi
-fi
+if ! wp plugin is-active redis-cache --allow-root; then
+	wp config set WP_REDIS_HOST redis --allow-root --type=constant
+	wp plugin install redis-cache --activate --allow-root
+	wp redis enable --allow-root
 
 chown -R www-data:www-data "$WORDPRESS_DIR"
 

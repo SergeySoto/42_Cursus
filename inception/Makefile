@@ -1,27 +1,21 @@
 NAME		= inception
 COMPOSE		= srcs/docker-compose.yml
 DATA_DIR	= $(HOME)/data
-COMPOSE_BONUS	= srcs/docker-compose.bonus.yml
-ALL_FILES	= -f $(COMPOSE) -f $(COMPOSE_BONUS)
 
 all: up
 
 up:
-	@mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
+	@mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb $(DATA_DIR)/portainer
 	docker compose -f $(COMPOSE) up --build -d -y
 
-bonus:
-	@mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
-	docker compose $(ALL_FILES) up --build -d -y
-
 down:
-	docker compose $(ALL_FILES) down
+	docker compose -f $(COMPOSE) down
 
 stop:
-	docker compose $(ALL_FILES) stop
+	docker compose -f $(COMPOSE) stop
 
 clean: down
-	docker compose $(ALL_FILES) down --volumes
+	docker compose -f $(COMPOSE) down --volumes
 	docker system prune -af
 
 fclean: clean
@@ -29,4 +23,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all up bonus down stop clean fclean re
+.PHONY: all up down stop clean fclean re
