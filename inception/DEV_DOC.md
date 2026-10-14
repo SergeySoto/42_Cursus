@@ -22,6 +22,7 @@ None of these files are versioned in Git (they are listed in `.gitignore`):
    - `db_password.txt`
    - `wp_admin_password.txt`
    - `wp_user_password.txt`
+   - `ftp_password.txt`
 
 2. **`srcs/.env`**, with the project's non-sensitive variables:
    ```env
@@ -35,6 +36,8 @@ None of these files are versioned in Git (they are listed in `.gitignore`):
    WP_ADMIN_EMAIL=admin@ssoto-su.42.fr
    WP_USER=editor_ssoto
    WP_USER_EMAIL=editor@ssoto-su.42.fr
+   
+   FTP_USER=ftp_user
    ```
    Important: `WP_ADMIN_USER` must not contain `admin`/`administrator` in any
    form — this is an explicit restriction from the subject.
@@ -44,14 +47,13 @@ None of these files are versioned in Git (they are listed in `.gitignore`):
    ```
    127.0.0.1   ssoto-su.42.fr
    ```
-   (or the VM's IP, depending on how you are accessing it).
 
 ## 2. Building and launching the project
 
 Everything goes through the `Makefile` at the root, which in turn calls
 Docker Compose pointing at `srcs/docker-compose.yml`:
 
-```
+```bash
 make          # creates the data folders and starts the stack with --build -d
 make down     # docker compose down
 make stop     # docker compose stop
@@ -63,7 +65,7 @@ make re       # fclean + make
 If you need to run Compose directly (for example, to debug something), the
 equivalent invocation is:
 
-```
+```bash
 docker compose -f srcs/docker-compose.yml up --build -d
 ```
 
@@ -81,34 +83,28 @@ docker compose -f srcs/docker-compose.yml up --build -d
 
 To debug a container that keeps restarting in a loop, checking its logs
 (`logs -f`) is more useful than trying `exec -it`, since the container may be
-crashing before you get a chance to get a shell inside it.
+crashing before you get a chance to get a shell inside it. You can also use the **Portainer** web UI for easier debugging.
 
 ## 4. Where and how the data persists
 
-The project uses two named volumes:
+The project uses three main named volumes:
 
 - **`mariadb_data`** → mounted at `/var/lib/mysql` inside the MariaDB
-  container (this is where the database physically lives).
-- **`wordpress_data`** → mounted at `/var/www/html` inside both the
-  WordPress and NGINX containers (the site's PHP files, shared between the
-  two).
+  container (where the database physically lives).
+- **`wordpress_data`** → mounted at `/var/www/html` inside the
+  WordPress, NGINX, and FTP containers (the site's files).
+- **`portainer_data`** → mounted at `/data` inside the Portainer container.
 
 Although these are named volumes (managed by Docker, visible with
-`docker volume ls`), both are configured with `bind`-type `driver_opts`,
-physically pointing to:
+`docker volume ls`), they are configured with `bind`-type `driver_opts`,
+physically pointing to the host:
 
-```
+```text
 /home/ssoto-su/data/mariadb
 /home/ssoto-su/data/wordpress
+/home/ssoto-su/data/portainer
 ```
 
-This means the data survives a `make down` (which only removes containers
-and the network), but is deliberately destroyed by `make fclean`, which, in
-addition to stopping the stack, also removes that host directory — this is
-meant to allow rebuilding the project completely from scratch when needed.
+This means the data survives a `make down`, but is deliberately destroyed by `make fclean`, which allows rebuilding the project completely from scratch. 
 
-Each stateful service (MariaDB and WordPress) checks, in its own
-`entrypoint.sh`, whether its data has already been initialized before
-repeating the installation process — so a `make down` followed by `make up`
-preserves both the database and the WordPress content, while only
-`make fclean` forces a brand-new installation.
+*Note: Portainer also mounts `/var/run/docker.sock` natively from the host to be able to monitor the Docker engine.*

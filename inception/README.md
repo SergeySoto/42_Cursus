@@ -9,17 +9,23 @@ build a small, self-contained web infrastructure using Docker, with every image
 built from scratch (no pre-made images pulled from Docker Hub, except for the
 Alpine/Debian base layer).
 
-The stack is composed of three services, each running in its own dedicated
-container, connected through a single Docker network:
+The stack is composed of several services (including mandatory and bonus parts), each running in its own dedicated container, connected through a single Docker network:
 
+**Mandatory Services:**
 - **NGINX** — the only entry point of the infrastructure, listening on port 443
   with TLSv1.2/TLSv1.3 only.
 - **WordPress + php-fpm** — the CMS itself, with php-fpm as the process manager
   (no web server bundled in this container).
 - **MariaDB** — the database engine that stores WordPress data.
 
-Two named Docker volumes persist the WordPress database and the WordPress files
-on the host, at `/home/ssoto-su/data`.
+**Bonus Services:**
+- **Redis** — in-memory data structure store used as an object cache for WordPress to improve performance.
+- **FTP (vsftpd)** — an FTP server pointing to the WordPress volume for direct file management.
+- **Adminer** — a lightweight database management tool in a single PHP file.
+- **Static Site** — a simple HTML resume served by its own lightweight NGINX instance.
+- **Portainer** — a powerful GUI to manage and monitor the Docker environment.
+
+Named Docker volumes persist the WordPress database, the WordPress files, and Portainer data on the host, at `/home/ssoto-su/data`.
 
 ## Instructions
 
@@ -32,14 +38,14 @@ on the host, at `/home/ssoto-su/data`.
 
 1. Clone the repository.
 2. Create the `secrets/` files (`db_password.txt`, `db_root_password.txt`,
-   `wp_admin_password.txt`, `wp_user_password.txt`) at the repository root —
+   `wp_admin_password.txt`, `wp_user_password.txt`, `ftp_password.txt`) at the repository root —
    these are intentionally not versioned.
 3. Create `srcs/.env` with the required configuration variables (domain name,
    database name/user, WordPress admin/user info).
 
 ### Build and run
 
-```
+```bash
 make          # builds every image and starts the stack in the background
 make down     # stops and removes the containers
 make stop     # stops the containers without removing them
@@ -48,7 +54,7 @@ make fclean   # clean + removes the persisted data on the host
 make re       # fclean + make (full rebuild from scratch)
 ```
 
-Once running, the site is reachable at `https://ssoto-su.42.fr`.
+Once running, the main site is reachable at `https://ssoto-su.42.fr`.
 
 ## Project description: Docker design choices
 
@@ -58,9 +64,7 @@ A virtual machine virtualizes an entire computer, including its own kernel, whic
 makes it heavier to run and slower to start. A Docker container instead shares
 the host machine's kernel and only isolates the application layer (processes,
 filesystem, network), which makes it lightweight and fast to start. In this
-project, each service (NGINX, WordPress, MariaDB) runs in its own container
-rather than its own VM, which keeps resource usage low while still isolating
-each service from the others.
+project, each service runs in its own container rather than its own VM, which keeps resource usage low while still isolating each service from the others.
 
 ### Secrets vs Environment Variables
 
@@ -70,10 +74,7 @@ An environment variable declared in `docker-compose.yml` (or loaded from a
 end up in logs or crash reports. A Docker secret is mounted as a read-only file
 under `/run/secrets/<name>`, backed by `tmpfs` (memory, not disk), and is not
 exposed through `docker inspect`. For this reason, all passwords in this
-project (database root password, database user password, WordPress admin and
-user passwords) are handled as Docker secrets, while non-sensitive
-configuration (domain name, database name, usernames, WordPress title) is kept
-in the `.env` file.
+project (database, WordPress, and FTP passwords) are handled as Docker secrets, while non-sensitive configuration is kept in the `.env` file.
 
 ### Docker Network vs Host Network
 
@@ -98,7 +99,7 @@ data is nonetheless physically stored at `/home/ssoto-su/data`, which this
 project achieves by declaring named volumes with `driver_opts` of
 `type: none, o: bind`, pointing to that exact host path — combining the
 Docker-managed identity of a named volume with a predictable, inspectable
-location on disk.
+location on disk. *(Note: Portainer requires access to the host's `/var/run/docker.sock` via a standard system bind mount to function as a monitoring tool).*
 
 ## Resources
 
@@ -110,19 +111,14 @@ location on disk.
 
 ### AI usage
 
-An AI assistant (Claude, by Anthropic) was used throughout this project as a
+An AI assistant (Claude/Gemini) was used throughout this project as a
 learning aid, not as a code generator to copy verbatim. Its use was split in
 two ways: for purely declarative configuration (Dockerfiles, `docker-compose.yml`,
 NGINX and PHP-FPM configuration files), the assistant provided complete
 examples together with a line-by-line explanation of what each instruction
 does and why it is required by the subject. For the scripted logic (the
-`entrypoint.sh` files for MariaDB and WordPress, which include conditionals,
+`entrypoint.sh` files for MariaDB, WordPress, and FTP, which include conditionals,
 loops, and idempotency checks), the assistant acted as a Socratic mentor:
 explaining Bash syntax with generic, out-of-project examples, and reviewing
 drafts written by the student, pointing out bugs and reasoning about them,
-rather than writing that logic directly. The student also brought a
-Bash script suggested by a different AI tool for the WordPress entrypoint;
-this was reviewed together with Claude, which identified a critical bug (a
-required environment variable that was never populated from its Docker
-secret) and a design inconsistency (a secrets file format that did not match
-the project's own conventions), which the student then chose how to resolve.
+rather than writing that logic directly. 
