@@ -36,7 +36,7 @@ services:
   portainer:
     build: ./requirements/bonus/portainer
     container_name: portainer
-    image: portainer:v1
+    image: portainer
     restart: unless-stopped
     ports:
       - "9000:9000"

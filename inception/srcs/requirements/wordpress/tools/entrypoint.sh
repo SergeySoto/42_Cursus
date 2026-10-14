@@ -69,6 +69,7 @@ if ! wp plugin is-active redis-cache --allow-root; then
 	wp config set WP_REDIS_HOST redis --allow-root --type=constant
 	wp plugin install redis-cache --activate --allow-root
 	wp redis enable --allow-root
+fi
 
 chown -R www-data:www-data "$WORDPRESS_DIR"
 
